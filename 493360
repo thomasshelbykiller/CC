@@ -1,0 +1,426 @@
+P1:Create a soap web service to convert Celsius temperature to Fahrenheit and vice versa with Java client.
+
+webservice:ws2
+package:ty
+
+add web service operation
+
+ws2.java:
+@WebMethod(operationName = "convertFtoC")
+    public float convertFtoC(@WebParam(name = "a") float a) {
+        //TODO write your implementation code here:
+        return ((a-32)*5/9);
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "convertCtoF")
+    public float convertCtoF(@WebParam(name = "B") float B) {
+        //TODO write your implementation code here:
+        return ((B*9/5)+32);
+    }
+
+***creat web service client 
+***package name: tycs
+
+input.jsp:
+	<form action="output.jsp" method="POST">
+            Enter Temperature:
+            <input type = "text" name = "txt" value="" />
+            <input type = "submit" value="Convert" name="convert" />
+        </form>
+
+
+output.jsp:
+ 	<%
+            tycs.WS2_Service service=new tycs.WS2_Service();
+            tycs.WS2 port = service.getWS2Port();
+            String val = request.getParameter("txt");
+            float temp = Float.parseFloat(val);
+            float result1 = port.convertFtoC(temp);
+            float result2 = port.convertCtoF(temp);
+            out.println("Temperature conversion from F to C: "+result1);
+        %>
+        <br/>
+        <%
+            out.println("Temperature conversion from C to F: "+result2);
+        %>
+
+
+p2:Create a soap web service to convert celsius temperature to fahrenheit and vice versa using python client
+
+#go to web service refrences(2nd last folder)
+#schemaLocation="http://localhost:8080/Temperature/WS2?xsd=1"/>
+
+from zeep import Client
+
+wsdl_url = "http://localhost:8080/Temperature/WS2?wsdl"
+client = Client(wsdl_url)
+d = float(input("Enter Temperature: "))
+result1 = client.service.convertFtoC(d)
+result2 = client.service.convertCtoF(d)
+print(f"convertFtoC:",result1)
+print(f"convertCtoF:",result2)
+
+
+p3:: Create a soap service to convert Dollar to INR and vice versa using java client
+
+*******netstat -aon | find ":8080" | find "LISTENING"******
+webservice name: WS3
+package name: ty
+
+WS3.java:
+ /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "INRtoDOLL")
+    public String INRtoDOLL(@WebParam(name = "INR") double INR) {
+        //TODO write your implementation code here:
+        String result1 = "INR" + " in dollars: " + (INR / 83.11);
+        return result1;
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "DOLLtoINR")
+    public String DOLLtoINR(@WebParam(name = "DOLL") double DOLL) {
+        //TODO write your implementation code here:
+        String result2 = "DOLL" + " in INR: " + (DOLL * 83.11);
+        return result2;
+    }
+
+***creat web service client ***
+***package name: tycs3****
+
+
+input.jsp:
+	<form name="" action="output.jsp">
+            <pre>
+                Enter Currency: <input type="text" name="t1">
+
+
+                <input type="submit">   <input type="reset">
+            </pre>
+        </form>
+
+
+output.jsp:
+	<%-- start web service invocation --%><hr/>
+    	<%
+    	try {
+		tycs3.WS3_Service service = new tycs3.WS3_Service();
+		tycs3.WS3 port = service.getWS3Port();
+		 // TODO initialize WS operation arguments here
+		double inr = Double.parseDouble(request.getParameter("t1"));
+		// TODO process result here
+		java.lang.String result = port.inRtoDOLL(inr);
+		out.println("Result = "+result);
+        
+        	java.lang.String result2 = port.dolLtoINR(inr);
+        
+      	%>
+      
+      <br>
+      
+      	<%
+		out.println("Result = "+result2);
+        
+    		} catch (Exception ex) {
+		// TODO handle custom exceptions here
+    		}
+    	%>
+    	<%-- end web service invocation --%><hr/>
+
+
+
+p4: Create a soap service to convert Dollar to INR and vice versa using python client
+
+#go to web service refrences(2nd last folder)
+#schemaLocation="http://localhost:8080/CurrencyConverter/WS3?xsd=1"/>
+
+from zeep import Client
+
+wsdl_url = "http://localhost:8080/CurrencyConverter/WS3?wsdl"
+client = Client(wsdl_url)
+
+d = float(input("Enter currency in INR: "))
+result1 = client.service.INRtoDOLL(d)
+print(result1)
+
+i = float(input("Enter currency in INR: "))
+result2 = client.service.DOLLtoINR(i)
+print(result2)
+
+
+p5:Create a web service to perform a CRUD operation (Player database)
+
+go to service tab in JavaDB start server and Create Database
+
+Database Name: Player
+User Name: john 
+Password: john
+
+now connect that created database
+
+Expand that database <-John<-Tables and create table and add column
+
+ID <- Integer <-primary
+FIRSTNAME <-Varchar <- size 20
+LASTNAME <-Varchar <- size 20
+JERSEYNUMBER <- Integer
+LASTSPOKENWORDS <-Varchar <- size 20
+
+On PlayerDB right click view data and Insert record
+
+Create a web application
+right click on project New <- others <- Restful web service from database
+
+Select New data source 
+Name: jdbc/playerDB
+DB conn: select your created database and Add all
+Package name: com.playerentity
+
+create a java<-java application
+right click on project new <- Entity classes from database
+DB conn: select your created database and Add all
+package: playerentities
+
+create New > Other > Web Service > New RESTful Java Client
+Browse and select file
+
+CreatePlayerJerseyClient:
+public static void main(String args[])throws IOException {
+
+        CreatePlayerJerseyClient client1=new CreatePlayerJerseyClient();
+        Response response=client1.findAll_XML(Response.class);
+
+        GenericType<List<Player>> genericType = new GenericType<List<Player>>() {};
+        // Returns an ArrayList of Players from the web service
+        if(response.getStatus() == Response.Status.OK.getStatusCode()){
+            List<Player> data= response.readEntity(genericType);
+
+            Player p=new Player();
+            p.setFirstname("Anish");
+            p.setId(13);
+            p.setJerseynumber(25);
+            p.setLastname("Nalekar");
+            p.setLastspokenwords("Kai rai tu");
+            client1.create_XML(p);
+        }
+        else{
+            System.err.println("Error found, Status: "+ response.getStatus());
+        }
+    }
+
+
+GetPlayerClient:
+public static void main(String args[])throws IOException {
+
+        CreatePlayerJerseyClient client1=new CreatePlayerJerseyClient();
+        Response response=client1.findAll_XML(Response.class);
+
+        GenericType<List<Player>> genericType = new GenericType<List<Player>>() {};
+        // Returns an ArrayList of Players from the web service
+        if(response.getStatus() == Response.Status.OK.getStatusCode()){
+            List<Player> data= response.readEntity(genericType);
+
+            System.out.println("Retrieved Details: ");
+            for (Player player : data){
+                System.out.println("PlayerID: " + player.getId());
+                System.out.println("FirstName: " + player.getFirstname());
+                System.out.println("LastName: " + player.getLastname());
+                System.out.println("JerseyNo.: " + player.getJerseynumber());
+                System.out.println("LastSpokenName: " + player.getLastspokenwords());
+            }
+        }
+        else{
+            System.err.println("Error found, Status: "+ response.getStatus());
+        }
+    }
+
+UpdatePlayerClient:
+public static void main(String args[])throws IOException {
+
+        CreatePlayerJerseyClient client1=new CreatePlayerJerseyClient();
+        Response response=client1.find_XML(Response.class, "3");
+
+        GenericType<Player> genericType = new GenericType<Player>() {};
+        // Returns an ArrayList of Players from the web service
+        if(response.getStatus() == Response.Status.OK.getStatusCode()){
+            Player player= response.readEntity(genericType);
+
+            player.setJerseyn4umber(100);
+            player.setLastspokenwords(" I am Vengence");
+            client1.edit_XML(player, "3");
+
+            System.out.println("FirstName: "+player.getFirstname());
+            System.out.println("PlayerID: "+player.getId());
+            System.out.println(" Jerseyno: "+player.getJerseynumber());
+            System.out.println("LastName: "+player.getLastname());
+            System.out.println("Last Spoken Words: "+player.getLastspokenwords());
+        }
+        else{
+            System.err.println("Error found, Status: "+ response.getStatus());
+        }
+    }
+
+
+DeleteJerseyClient:
+public static void main(String args[])throws IOException {
+        
+        DeleteJerseyClient client1=new DeleteJerseyClient();
+        client1.remove("18"); //ID
+    }
+
+
+
+P7a:Create a web service to consume Google Map API
+
+link: https://console.cloud.google.com/cloud-resource-manager
+Api key: #AIzaSyDczfF7PrtTVdOJnJyb0VoVOl37fQyp0NY
+
+spring dependencies
++Spring Boot Dev Tool
++Lombok
++Thymeleaf
++Spring Web
+
+***creat file and add in these src/main/resource in templates*** 
+index.html:
+<html>
+ <head>
+   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+   <script type="text/javascript">
+     google.charts.load("current", {
+       "packages":["map"],
+       // Note: you will need to get a mapsApiKey for your project.
+       // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+       "mapsApiKey": "AIzaSyDczfF7PrtTVdOJnJyb0VoVOl37fQyp0NY"
+     });
+     google.charts.setOnLoadCallback(drawChart);
+     function drawChart() {
+       var data = google.visualization.arrayToDataTable([
+         ['Lat', 'Long', 'Name'],
+         [19.0760,  72.8777, 'Mumbai'],
+         [18.5204, 73.8567, 'Pune'],
+         [19.1176, 72.9060, 'Powai'],
+       ]);
+       var map = new google.visualization.Map(document.getElementById('map_div'));
+       map.draw(data, {
+         showTooltip: true,
+         showInfoWindow: true
+       });
+     }
+   </script>
+ </head>
+ <body>
+   <div id="map_div" style="width: 800px; height: 700px"></div>
+ </body>
+</html>
+
+***src/main/java right click and creat class
+MapController.java:
+package com.example.demo;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class MapController {	
+	
+
+	@GetMapping("/showMap")
+	   public String index() {
+	       return "index";
+	   }
+	}
+
+
+
+P7b:(programable search engine) Write a program to consume a Google Search RestFul API. (Not confirmed, as Not using Restful API)
+
+link: https://developers.google.com/custom-search/v1/introduction
+Custom Search API: AIzaSyBqiTjW7Cr0-9mEVLDtS9yiH0h7kVF2AVo
+link: https://programmablesearchengine.google.com/controlpanel/all
+search engine id: 379364bbb32274096
+
+code:
+import requests
+
+def google_search(query, api_key, cx):
+    base_url = "https://www.googleapis.com/customsearch/v1"
+    params = {
+        'q': query,
+        'key': api_key,
+        'cx': cx
+    }
+
+    try:
+        response = requests.get(base_url, params=params)
+        response.raise_for_status()  # Raise an HTTPError for bad responses
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
+        return None
+
+def print_search_results(results):
+    if results and 'items' in results:
+        for item in results['items']:
+            print(f"Title: {item['title']}")
+            print(f"Link: {item['link']}")
+            print(f"Snippet: {item['snippet']}")
+            print("\n---\n")
+    else:
+        print("No results found.")
+
+if __name__ == "__main__":
+    api_key = "AIzaSyD8mHd_G8raiaoGOJ6FgLfahrttl8LXumE"
+    cx = "16b9871d237f84236"
+    query = input("Enter your search query: ")
+
+    search_results = google_search(query, api_key, cx)
+    print_search_results(search_results)
+
+
+
+p8: Installation and configuration of virtualization using KVM (Kernel Virtual Machine) 
+
+sudo apt-get install qemu-kvm libvirt-clients bridge-utils virt-manager 
+sudo adduser pract1
+***sudo addgroup libvirtd***
+sudo adduser pract1 libvirt
+
+
+
+P10: Write a program to consume weather API.
+
+link: https://home.openweathermap.org/api_keys
+Api key: ca4bde63d22f8f09efd91f2962cb6f38
+
+code:
+import requests
+import json
+
+api_key = "ca4bde63d22f8f09efd91f2962cb6f38"  # Replace with your actual API key
+base_url = "http://api.openweathermap.org/data/2.5/weather?"
+city_name = input("Enter city name: ")
+
+complete_url = base_url + f"appid={api_key}&q={city_name}"
+response = requests.get(complete_url)
+weather_data = response.json()
+
+if "main" in weather_data:
+    main_info = weather_data["main"]
+    current_temperature = main_info["temp"]
+    current_pressure = main_info["pressure"]
+    current_humidity = main_info["humidity"]
+    weather_description = weather_data["weather"][0]["description"]
+
+    print(f"Temperature (in Kelvin): {current_temperature:.2f}")
+    print(f"Atmospheric pressure (in hPa): {current_pressure}")
+    print(f"Humidity (in percentage): {current_humidity}")
+    print(f"Description: {weather_description}")
+else:
+    print("City Not Found")
+
